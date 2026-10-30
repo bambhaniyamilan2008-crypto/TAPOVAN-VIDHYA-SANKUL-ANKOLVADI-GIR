@@ -6,45 +6,33 @@ import { admissionSchema } from "@/schema";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    
+    // 1. Validate incoming data with our new schema
+    const validatedData = admissionSchema.parse(body);
 
-    // 1. Honeypot Security Check (Bot protection)
-    // Agar bot ne 'website' field bhar di, toh usko fake success dikha do
-    if (body.website) {
-      console.warn("Bot detected via honeypot.");
-      return NextResponse.json({ ok: true, message: "Application submitted successfully." });
+    // 2. Honeypot Check: Agar kisi bot ne 'website' field bhar diya, to entry reject kar do
+    if (validatedData.website) {
+      return NextResponse.json({ error: "Spam detected" }, { status: 400 });
     }
 
-    // 2. Server-side Validation with Zod
-    const parsed = admissionSchema.safeParse(body);
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: "Invalid data provided", details: parsed.error.flatten().fieldErrors },
-        { status: 400 }
-      );
-    }
+    // 3. 'website' ko alag nikal lo, aur baaki ka data 'dataToSave' me daal do (No 'delete' keyword needed)
+    const { website, ...dataToSave } = validatedData;
 
-    // 3. Save to Firestore Securely via Admin SDK
+    // 4. Final Data for Database (Isme naye schema ke saare fields apne aap aa jayenge)
     const admissionData = {
-      ...parsed.data,
-      status: "new", // Admin portal me track karne ke liye
+      ...dataToSave,
+      status: "pending",
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
     };
 
-    // Honeypot field ko DB me save nahi karna
-    delete (admissionData as any).website;
-
+    // 5. Save to Firestore
     await adminDb.collection("admissions").add(admissionData);
 
-    return NextResponse.json(
-      { ok: true, message: "Application submitted successfully." },
-      { status: 201 }
-    );
+    return NextResponse.json({ success: true, message: "Application submitted successfully" }, { status: 200 });
+
   } catch (error: any) {
-    console.error("Admission API Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error. Please try again later." },
-      { status: 500 }
-    );
+    console.error("Admission Error:", error);
+    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }
 }
