@@ -16,6 +16,7 @@ if (!admin.apps.length) {
   }
 }
 
-export const adminDb = admin.firestore();
-export const adminAuth = admin.auth();
-export const adminStorage = admin.storage();
+// 🔥 YAHAN CHANGE KIYA HAI: Vercel build crash rokne ke liye condition lagayi
+export const adminDb = admin.apps.length ? admin.firestore() : ({} as any);
+export const adminAuth = admin.apps.length ? admin.auth() : ({} as any);
+export const adminStorage = admin.apps.length ? admin.storage() : ({} as any);
