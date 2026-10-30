@@ -12,7 +12,7 @@ export default async function AdminEnquiriesPage() {
       .orderBy("createdAt", "desc")
       .get();
       
-    enquiries = snapshot.docs.map(doc => ({
+    enquiries = snapshot.docs.map((doc: any) => ({
       id: doc.id,
       ...doc.data(),
       createdAt: doc.data().createdAt?.toDate() || new Date(),
