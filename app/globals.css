@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@700&family=Poppins:wght@300;400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Smooth scrolling for the whole website */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Optional: Custom scrollbar to make it look premium */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #0A3D62; /* School Blue */
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #F39C12; /* School Gold */
+}

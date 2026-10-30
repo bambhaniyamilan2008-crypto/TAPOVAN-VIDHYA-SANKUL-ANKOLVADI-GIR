@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Function to check if user is admin
+    function isAdmin() {
+      return request.auth != null && request.auth.token.role == 'admin';
+    }
+
+    // Public content (Results, Teachers, Gallery, etc.)
+    // Anyone can read, only Admin can write
+    match /teachers/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /results/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /gallery/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /infrastructure/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /settings/{document=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Sensitive Data (Admissions & Enquiries)
+    // Public can ONLY create. Public CANNOT read. Admin can read/write.
+    match /admissions/{document=**} {
+      allow create: if true; // Allows anyone to submit form
+      allow read, update, delete: if isAdmin();
+    }
+    match /enquiries/{document=**} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+    
+    // Admin user roles management
+    match /users/{userId} {
+      allow read, write: if isAdmin();
+    }
+  }
+}
