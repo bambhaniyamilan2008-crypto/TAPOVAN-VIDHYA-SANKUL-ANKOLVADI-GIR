@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     };
 
     // Honeypot field ko DB me save nahi karna
-    delete admissionData.website;
+    delete (admissionData as any).website;
 
     await adminDb.collection("admissions").add(admissionData);
 
