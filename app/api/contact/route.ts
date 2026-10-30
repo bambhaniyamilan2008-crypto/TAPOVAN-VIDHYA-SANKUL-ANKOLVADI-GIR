@@ -3,6 +3,8 @@ import { FieldValue } from "firebase-admin/firestore";
 import { adminDb } from "@/lib/firebaseAdmin";
 import { contactSchema } from "@/schema";
 
+
+export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
