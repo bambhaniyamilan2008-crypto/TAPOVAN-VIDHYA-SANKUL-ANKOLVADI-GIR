@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+// ==========================================
+// 1. ADMISSION FORM SCHEMA
+// ==========================================
 export const admissionSchema = z.object({
   studentName: z.string().min(2, "Student's name is required"),
   parentName: z.string().min(2, "Parent's name is required"),
@@ -12,3 +15,18 @@ export const admissionSchema = z.object({
 });
 
 export type AdmissionFormData = z.infer<typeof admissionSchema>;
+
+
+// ==========================================
+// 2. CONTACT FORM SCHEMA (Jo missing tha)
+// ==========================================
+export const contactSchema = z.object({
+  name: z.string().min(2, "Name is required"),
+  email: z.string().email("Invalid email address"),
+  phone: z.string().optional().or(z.literal("")),
+  subject: z.string().optional().or(z.literal("")),
+  message: z.string().min(5, "Message is required"),
+  website: z.string().optional(), // Honeypot ke liye
+});
+
+export type ContactFormData = z.infer<typeof contactSchema>;
